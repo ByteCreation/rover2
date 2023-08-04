@@ -24,14 +24,14 @@ flag1 = [
 ]
 
 flag2 = [
-    r, w, b, r, r, b, w, r,
-    b, r, w, r, r, w, r, b,
-    w, b, w, r, r, w, b, w,
+    r, b, w, r, r, w, b, r,
+    w, r, w, r, r, w, r, w,
+    b, b, w, r, r, w, b, b,
     r, r, r, r, r, r, r, r,
     r, r, r, r, r, r, r, r,
-    w, b, w, r, r, w, b, w,
-    b, r, w, r, r, w, r, b,
-    r, w, b, r, r, b, w, r
+    b, b, w, r, r, w, b, b,
+    w, r, w, r, r, w, r, w,
+    r, b, w, r, r, w, b, r
 ]
 
 thing = [

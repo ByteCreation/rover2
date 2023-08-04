@@ -1,38 +1,201 @@
-#!/usr/bin/python
-import sys
+
+import time
 from sense_hat import SenseHat
 
-# To get good results with the magnetometer you must first calibrate it using
-# the program in RTIMULib/Linux/RTIMULibCal
-# The calibration program will produce the file RTIMULib.ini
-# Copy it into the same folder as your Python code
-
-led_loop = [4, 5, 6, 7, 15, 23, 31, 39, 47, 55, 63, 62, 61, 60, 59, 58, 57, 56, 48, 40, 32, 24, 16, 8, 0, 1, 2, 3]
-
 sense = SenseHat()
-sense.set_rotation(0)
-sense.clear()
 
-sense.set_imu_config(True, True, True)
+# sense.clear()
+r = [200, 16, 46]
+b = [1, 33, 105]
+w = [255, 255, 255]
+g = [185, 185, 185]
+O = [0,0,0]
+X = [0,0,0]
 
-prev_x = 0
-prev_y = 0
+flag1 = [
+    r, w, b, r, r, b, w, r,
+    b, r, b, r, r, b, r, b,
+    w, w, w, r, r, w, w, w,
+    r, r, r, r, r, r, r, r,
+    r, r, r, r, r, r, r, r,
+    w, w, w, r, r, w, w, w,
+    b, r, b, r, r, b, r, b,
+    r, w, b, r, r, b, w, r
+]
 
-led_degree_ratio = len(led_loop) / 360.0
+flag2 = [
+    r, w, b, r, r, b, w, r,
+    b, r, w, r, r, w, r, b,
+    w, b, w, r, r, w, b, w,
+    r, r, r, r, r, r, r, r,
+    r, r, r, r, r, r, r, r,
+    w, b, w, r, r, w, b, w,
+    b, r, w, r, r, w, r, b,
+    r, w, b, r, r, b, w, r
+]
+
+thing = [
+    [
+        b, b, b, r, r, b, b, b,
+        b, b, b, r, r, b, b, b,
+        b, b, b, r, r, b, b, b,
+        b, r, b, g, g, b, r, b,
+        b, r, b, g, g, b, r, b,
+        b, b, b, r, r, b, b, b,
+        b, b, b, r, r, b, b, b,
+        b, b, b, r, r, b, b, b
+    ],
+    [
+        b, r, r, b, b, b, b, b,
+        b, b, r, r, b, b, b, b,
+        b, b, b, r, r, b, b, b,
+        b, r, b, g, g, b, r, b,
+        b, r, b, g, g, b, r, b,
+        b, b, b, r, r, b, b, b,
+        b, b, b, b, r, r, b, b,
+        b, b, b, b, b, r, r, b
+    ],
+    [
+        r, r, b, b, b, b, b, b,
+        b, r, r, b, b, b, b, b,
+        b, b, r, r, b, b, r, b,
+        b, b, b, g, g, b, r, b,
+        b, r, b, g, g, b, b, b,
+        b, r, b, b, r, r, b, b,
+        b, b, b, b, b, r, r, b,
+        b, b, b, b, b, b, r, r,
+    ],
+    [
+        b, b, b, b, b, b, b, b,
+        r, r, r, b, b, r, b, b,
+        r, r, r, r, b, b, r, b,
+        b, b, b, g, g, b, b, b,
+        b, b, b, g, g, b, b, b,
+        b, r, b, b, r, r, r, r,
+        b, b, r, b, b, r, r, r,
+        b, b, b, b, b, b, b, b,
+    ],
+    [
+        b, b, b, b, b, b, b, b,
+        b, b, b, b, b, r, b, b,
+        r, r, r, r, b, b, r, b,
+        r, r, r, g, g, b, b, b,
+        b, b, b, g, g, r, r, r,
+        b, r, b, b, r, r, r, r,
+        b, b, r, b, b, b, b, b,
+        b, b, b, b, b, b, b, b,
+    ],
+    [
+        b, b, b, b, b, b, b, b,
+        b, b, b, b, r, r, b, b,
+        r, b, b, b, b, b, b, b,
+        r, r, r, g, g, r, r, b,
+        b, r, r, g, g, r, r, r,
+        b, b, b, b, b, b, b, r,
+        b, b, r, r, b, b, b, b,
+        b, b, b, b, b, b, b, b,
+    ],
+    [
+        b, b, b, b, b, b, b, b,
+        b, b, b, r, r, b, b, b,
+        b, b, b, b, b, b, b, b,
+        r, r, r, g, g, r, r, r,
+        r, r, r, g, g, r, r, r,
+        b, b, b, b, b, b, b, b,
+        b, b, b, r, r, b, b, b,
+        b, b, b, b, b, b, b, b,
+    ],
+    [
+        b, b, b, b, b, b, b, b,
+        b, b, b, r, r, b, b, r,
+        b, b, b, b, b, b, r, r,
+        b, b, r, g, g, r, r, b,
+        b, r, r, g, g, r, b, b,
+        r, r, b, b, b, b, b, b,
+        r, b, b, r, r, b, b, b,
+        b, b, b, b, b, b, b, b,
+    ],
+    [
+        b, b, b, b, b, b, b, r,
+        b, b, r, r, b, b, r, r,
+        b, b, b, b, b, r, r, b,
+        b, b, b, g, g, r, b, b,
+        b, b, r, g, g, b, b, b,
+        b, r, r, b, b, b, b, b,
+        r, r, b, b, r, r, b, b,
+        r, b, b, b, b, b, b, b,
+    ],
+    [
+        b, b, b, b, b, r, r, b,
+        b, b, r, b, b, r, r, b,
+        b, r, b, b, b, r, r, b,
+        b, b, b, g, g, r, b, b,
+        b, b, r, g, g, b, b, b,
+        b, r, r, b, b, b, r, b,
+        b, r, r, b, b, r, b, b,
+        b, r, r, b, b, b, b, b,
+    ],
+    [
+        b, b, b, b, r, r, b, b,
+        b, b, b, r, r, b, b, b,
+        b, r, b, r, r, b, b, b,
+        b, r, b, g, g, b, b, b,
+        b, b, b, g, g, b, r, b,
+        b, b, b, r, r, b, r, b,
+        b, b, b, r, r, b, b, b,
+        b, b, r, r, b, b, b, b,
+    ],
+    [
+        b, b, b, r, r, b, b, b,
+        b, b, b, r, r, b, b, b,
+        b, b, b, r, r, b, b, b,
+        b, r, b, g, g, b, r, b,
+        b, r, b, g, g, b, r, b,
+        b, b, b, r, r, b, b, b,
+        b, b, b, r, r, b, b, b,
+        b, b, b, r, r, b, b, b,
+    ]
+]
+
+def turnClockwise():
+    loopnum = 0
+    while loopnum <= 5:
+        loopthing = 0
+        while loopthing <= 11:
+            time.sleep(0.04)
+            sense.set_pixels(thing[loopthing])
+            loopthing += 1
+        loopnum += 1
+
+def turnAnticlockwise():
+    loopnum = 0
+    while loopnum <= 5:
+        loopthing = 11
+        while loopthing >= 0:
+            time.sleep(0.04)
+            sense.set_pixels(thing[loopthing])
+            loopthing -= 1
+        loopnum += 1
+
+def flagOne():
+    sense.set_pixels(flag1)
+
+def flagTwo():
+    sense.set_pixels(flag2)
+
+def clear():
+    sense.clear()
 
 while True:
-    dir = sense.get_compass()
-    dir_inverted = 360 - dir  # So LED appears to follow North
-    led_index = int(led_degree_ratio * dir_inverted)
-    offset = led_loop[led_index]
-
-    y = offset // 8  # row
-    x = offset % 8  # column
-
-    if x != prev_x or y != prev_y:
-        sense.set_pixel(prev_x, prev_y, 0, 0, 0)
-
-    sense.set_pixel(x, y, 0, 0, 255)
-
-    prev_x = x
-    prev_y = y
+    for event in sense.stick.get_events():
+        print(event.direction, event.action)
+        if event.direction == 'left' and event.action == 'released':
+            turnClockwise()
+        elif event.direction == 'right' and event.action == 'released':
+            turnAnticlockwise()
+        elif event.direction == 'down' and event.action == 'released':
+            flagOne()
+        elif event.direction == 'up' and event.action == 'released':
+            flagTwo()
+        elif event.direction == 'middle' and event.action == 'released':
+            clear()
